@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ user.name }}</h5>
+                    <p class="card-text text-danger">Administrator</p>
+                    <hr>
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('admin.dashboard') }}" class="btn btn-primary">Dashboard</a>
+                        <a href="{{ url_for('admin.manage_users') }}" class="btn btn-outline-primary">Manage Users</a>
+                        <a href="{{ url_for('admin.manage_appointments') }}" class="btn btn-outline-primary">Manage Appointments</a>
+                        <a href="{{ url_for('cabinet.profile_settings') }}" class="btn btn-outline-primary">Profile Settings</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9">
+            <h2 class="mb-4">Admin Dashboard</h2>
+            
+            <!-- Statistics Cards -->
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="card bg-primary text-white">
+                        <div class="card-body">
+                            <h5 class="card-title">Total Users</h5>
+                            <h2>{{ stats.total_users }}</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card bg-success text-white">
+                        <div class="card-body">
+                            <h5 class="card-title">Total Doctors</h5>
+                            <h2>{{ stats.total_doctors }}</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card bg-info text-white">
+                        <div class="card-body">
+                            <h5 class="card-title">Total Appointments</h5>
+                            <h2>{{ stats.total_appointments }}</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Recent Activity</h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group">
+                        {% for activity in recent_activity %}
+                            <div class="list-group-item">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-1">{{ activity.action }}</h6>
+                                    <small class="text-muted">{{ activity.timestamp }}</small>
+                                </div>
+                                <p class="mb-1">{{ activity.description }}</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

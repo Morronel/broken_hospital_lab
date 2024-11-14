@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Hero Carousel -->
+<div id="heroCarousel" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-indicators">
+        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active"></button>
+        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1"></button>
+        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2"></button>
+    </div>
+    
+    <div class="carousel-inner">
+        <div class="carousel-item active">
+            <div class="carousel-content bg-dark">
+                <div class="container">
+                    <h2 class="text-info">AI Diagnostics™</h2>
+                    <p class="text-light">"Our AI has watched every episode of House M.D. Twice."</p>
+                    <small class="text-muted">* Diagnostic accuracy may be influenced by your insurance plan</small>
+                </div>
+            </div>
+        </div>
+        <div class="carousel-item">
+            <div class="carousel-content bg-primary">
+                <div class="container">
+                    <h2 class="text-white">Quantum Healing Chamber</h2>
+                    <p class="text-light">"It's like a tanning bed, but for your soul."</p>
+                    <small class="text-light">* Results may be observable in parallel universes only</small>
+                </div>
+            </div>
+        </div>
+        <div class="carousel-item">
+            <div class="carousel-content bg-success">
+                <div class="container">
+                    <h2 class="text-white">Digital Detox Program</h2>
+                    <p class="text-light">"We'll cure your iPhone addiction by giving you an Android."</p>
+                    <small class="text-light">* Side effects include nostalgia for physical buttons</small>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon"></span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon"></span>
+    </button>
+</div>
+
+<!-- Services Section -->
+<section id="services" class="py-5">
+    <div class="container">
+        <h2 class="text-center mb-4">Our Services</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Virtual Reality Surgery</h5>
+                        <p class="card-text">Experience surgery from the comfort of your gaming chair.</p>
+                        <small class="text-muted">* Not covered by most insurance plans</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Blockchain Prescriptions</h5>
+                        <p class="card-text">Your medications are now NFTs. Trade them on our marketplace!</p>
+                        <small class="text-muted">* Gas fees may apply</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Cloud-Based Therapy</h5>
+                        <p class="card-text">Talk to our therapist bots powered by ChatGPT.</p>
+                        <small class="text-muted">* May occasionally give existential advice</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Feedback Section -->
+<section id="feedback" class="py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center mb-4">Patient Feedback</h2>
+        <div class="row">
+            <div class="col-md-8 mx-auto">
+                <div class="card">
+                    <div class="card-body">
+                        <blockquote class="blockquote mb-0">
+                            <p>"The AI diagnosed me with cyberpunk syndrome. I didn't even know that was a thing!"</p>
+                            <footer class="blockquote-footer">Anonymous Patient <cite>(probably)</cite></footer>
+                        </blockquote>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+.carousel-content {
+    height: 400px;
+    display: flex;
+    align-items: center;
+    text-align: center;
+}
+
+.carousel-content .container {
+    max-width: 800px;
+}
+
+.card {
+    transition: transform 0.2s;
+    border: none;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.carousel-item h2 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.carousel-item p {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+}
+
+@media (max-width: 768px) {
+    .carousel-content {
+        height: 300px;
+    }
+    
+    .carousel-item h2 {
+        font-size: 2rem;
+    }
+    
+    .carousel-item p {
+        font-size: 1rem;
+    }
+}
+</style>
+{% endblock %} 

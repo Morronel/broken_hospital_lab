@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Dr. {{ user.name }}</h5>
+                    <p class="card-text">{{ doctor.specialization }}</p>
+                    <hr>
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('cabinet.doctor_dashboard') }}" class="btn btn-primary">Dashboard</a>
+                        <a href="{{ url_for('cabinet.appointment_history', user_id=user.id) }}" class="btn btn-outline-primary">Appointment History</a>
+                        <a href="{{ url_for('cabinet.profile_settings') }}" class="btn btn-outline-primary">Profile Settings</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9">
+            <h2 class="mb-4">Upcoming Appointments</h2>
+            
+            {% if appointments %}
+                <div class="row">
+                    {% for appointment in appointments %}
+                        <div class="col-md-6 mb-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ appointment.patient_name }}</h5>
+                                    <p class="card-text">
+                                        <small class="text-muted">
+                                            {{ appointment.sex }}
+                                            {% if appointment.birth_date %}
+                                                {% set birth = appointment.birth_date|datetime %}
+                                                {% if birth %}
+                                                    , {{ ((now().date() - birth).days / 365.25)|int }} years old
+                                                {% endif %}
+                                            {% endif %}
+                                        </small>
+                                    </p>
+                                    <p class="card-text">
+                                        <strong>Date:</strong> {{ appointment.date }}<br>
+                                        <strong>Time:</strong> {{ appointment.time }}<br>
+                                        <strong>Complaint:</strong> {{ appointment.initial_complaint }}
+                                    </p>
+                                    <a href="{{ url_for('cabinet.resolve_appointment', appointment_id=appointment.id) }}" 
+                                       class="btn btn-primary">Resolve Appointment</a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="alert alert-info">No upcoming appointments.</div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %} 

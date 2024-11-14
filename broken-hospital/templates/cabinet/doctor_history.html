@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Dr. {{ user.name }}</h5>
+                    <p class="card-text">{{ doctor.specialization }}</p>
+                    <hr>
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('cabinet.doctor_dashboard') }}" class="btn btn-outline-primary">Dashboard</a>
+                        <a href="{{ url_for('cabinet.appointment_history', user_id=user.id) }}" class="btn btn-primary">Appointment History</a>
+                        <a href="{{ url_for('cabinet.profile_settings') }}" class="btn btn-outline-primary">Profile Settings</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9">
+            <h2 class="mb-4">Appointment History</h2>
+            
+            {% if appointments %}
+                <div class="row">
+                    {% for appointment in appointments %}
+                        <div class="col-md-6 mb-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ appointment.patient_name }}</h5>
+                                    <p class="text-muted">{{ appointment.date }} at {{ appointment.time }}</p>
+                                    <hr>
+                                    <p><strong>Initial Complaint:</strong><br>{{ appointment.initial_complaint }}</p>
+                                    <p><strong>Diagnosis:</strong><br>{{ appointment.diagnosis }}</p>
+                                    <p><strong>Recommendations:</strong><br>{{ appointment.recommendations }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="alert alert-info">No appointment history found.</div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %} 

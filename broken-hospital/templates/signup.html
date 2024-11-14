@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <!-- Success Modal -->
+            <div class="modal fade" id="successModal" tabindex="-1">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content bg-dark text-light border border-primary">
+                        <div class="modal-body text-center p-4">
+                            <div class="mb-4">
+                                <span style="font-size: 4rem;">🏥</span>
+                            </div>
+                            <h3 class="text-primary mb-3" style="text-shadow: 0 0 10px #0d6efd;">Registration Successful!</h3>
+                            <div class="d-grid">
+                                <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal" onclick="window.location.href='/login'">
+                                    Proceed to Login
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h2 class="text-center mb-4">Create Your Account</h2>
+            <form id="signupForm">
+                <div class="mb-3">
+                    <label for="name" class="form-label">Full Name</label>
+                    <input type="text" class="form-control" id="name" required>
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" required>
+                    <div id="emailError" class="text-danger mt-1"></div>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="password" required>
+                </div>
+                <div class="mb-3">
+                    <label for="confirmPassword" class="form-label">Confirm Password</label>
+                    <input type="password" class="form-control" id="confirmPassword" required>
+                    <div id="passwordError" class="text-danger mt-1"></div>
+                </div>
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary">Sign Up</button>
+                </div>
+            </form>
+            <p class="text-center mt-3">
+                Already have an account? <a href="{{ url_for('login.login') }}" class="text-primary">Login here</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('signupForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+    const email = document.getElementById('email').value;
+    
+    // Clear previous errors
+    document.getElementById('emailError').textContent = '';
+    document.getElementById('passwordError').textContent = '';
+    
+    if (password !== confirmPassword) {
+        document.getElementById('passwordError').textContent = 'Passwords do not match';
+        return;
+    }
+    
+    try {
+        const response = await fetch('/signup', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                name: document.getElementById('name').value,
+                email: email,
+                password: password
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+            // Show success modal without email confirmation message
+            const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+            successModal.show();
+        } else {
+            document.getElementById('emailError').textContent = data.error || 'An error occurred';
+        }
+    } catch (error) {
+        document.getElementById('emailError').textContent = 'Network error occurred';
+    }
+});
+</script>
+{% endblock %} 

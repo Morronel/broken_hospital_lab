@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ user.name }}</h5>
+                    <p class="card-text text-muted">Patient</p>
+                    <hr>
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('cabinet.patient_dashboard') }}" class="btn btn-outline-primary">Dashboard</a>
+                        <a href="{{ url_for('cabinet.appointment_history', user_id=user.id) }}" class="btn btn-outline-primary">Appointment History</a>
+                        <a href="{{ url_for('cabinet.schedule_appointment') }}" class="btn btn-primary">Schedule Appointment</a>
+                        <a href="{{ url_for('cabinet.profile_settings') }}" class="btn btn-outline-primary">Profile Settings</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9">
+            <h2 class="mb-4">Schedule New Appointment</h2>
+            
+            <div class="card">
+                <div class="card-body">
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label for="doctor_id" class="form-label">Select Doctor</label>
+                            <select class="form-select" id="doctor_id" name="doctor_id" required>
+                                <option value="">Choose a doctor...</option>
+                                {% for doctor in doctors %}
+                                    <option value="{{ doctor.id }}">Dr. {{ doctor.doctor_name }} - {{ doctor.specialization }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="date" class="form-label">Date</label>
+                            <input type="date" class="form-control" id="date" name="date" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="time" class="form-label">Time</label>
+                            <input type="time" class="form-control" id="time" name="time" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="complaint" class="form-label">Initial Complaint</label>
+                            <textarea class="form-control" id="complaint" name="complaint" rows="3" required></textarea>
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Schedule Appointment</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ user.name }}</h5>
+                    <p class="card-text text-danger">Administrator</p>
+                    <hr>
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-primary">Dashboard</a>
+                        <a href="{{ url_for('admin.manage_users') }}" class="btn btn-primary">Manage Users</a>
+                        <a href="{{ url_for('admin.manage_appointments') }}" class="btn btn-outline-primary">Manage Appointments</a>
+                        <a href="{{ url_for('cabinet.profile_settings') }}" class="btn btn-outline-primary">Profile Settings</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9">
+            <h2 class="mb-4">Edit User</h2>
+            <div class="card">
+                <div class="card-body">
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Name</label>
+                            <input type="text" class="form-control" id="name" name="name" value="{{ user_to_edit.name }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" value="{{ user_to_edit.email }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="role" class="form-label">Role</label>
+                            <select class="form-select" id="role" name="role" required>
+                                <option value="patient" {% if user_to_edit.role == 'patient' %}selected{% endif %}>Patient</option>
+                                <option value="doctor" {% if user_to_edit.role == 'doctor' %}selected{% endif %}>Doctor</option>
+                                <option value="admin" {% if user_to_edit.role == 'admin' %}selected{% endif %}>Admin</option>
+                            </select>
+                        </div>
+                        <div class="mb-3" id="specialization-group" {% if user_to_edit.role != 'doctor' %}style="display: none;"{% endif %}>
+                            <label for="specialization" class="form-label">Specialization</label>
+                            <input type="text" class="form-control" id="specialization" name="specialization" 
+                                   value="{{ user_to_edit.specialization if user_to_edit.specialization else '' }}">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                        <a href="{{ url_for('admin.manage_users') }}" class="btn btn-secondary">Cancel</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('role').addEventListener('change', function() {
+    const specializationGroup = document.getElementById('specialization-group');
+    specializationGroup.style.display = this.value === 'doctor' ? 'block' : 'none';
+});
+</script>
+{% endblock %} 

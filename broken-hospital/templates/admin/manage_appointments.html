@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ user.name }}</h5>
+                    <p class="card-text text-danger">Administrator</p>
+                    <hr>
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-primary">Dashboard</a>
+                        <a href="{{ url_for('admin.manage_users') }}" class="btn btn-outline-primary">Manage Users</a>
+                        <a href="{{ url_for('admin.manage_appointments') }}" class="btn btn-primary">Manage Appointments</a>
+                        <a href="{{ url_for('cabinet.profile_settings') }}" class="btn btn-outline-primary">Profile Settings</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9">
+            <h2 class="mb-4">Manage Appointments</h2>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Patient</th>
+                            <th>Doctor</th>
+                            <th>Status</th>
+                            <th>Complaint</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for appointment in appointments %}
+                        <tr>
+                            <td>{{ appointment.date }}</td>
+                            <td>{{ appointment.time }}</td>
+                            <td>{{ appointment.patient_name }}</td>
+                            <td>
+                                Dr. {{ appointment.doctor_name }}<br>
+                                <small class="text-muted">{{ appointment.specialization }}</small>
+                            </td>
+                            <td>
+                                <span class="badge bg-{{ 'primary' if appointment.status == 'scheduled' 
+                                                else 'success' if appointment.status == 'completed' 
+                                                else 'danger' }}">
+                                    {{ appointment.status|title }}
+                                </span>
+                            </td>
+                            <td>{{ appointment.initial_complaint }}</td>
+                            <td>
+                                <div class="dropdown">
+                                    <button class="btn btn-sm btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                        Actions
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        {% if appointment.status == 'scheduled' %}
+                                        <li>
+                                            <button class="dropdown-item text-danger" 
+                                                    onclick="confirmCancel({{ appointment.id }})">
+                                                Cancel Appointment
+                                            </button>
+                                        </li>
+                                        {% endif %}
+                                        {% if appointment.status == 'completed' and appointment.diagnosis %}
+                                        <li>
+                                            <button class="dropdown-item" 
+                                                    onclick="showDiagnosis({{ appointment.id }})">
+                                                View Details
+                                            </button>
+                                        </li>
+                                        {% endif %}
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Cancel Appointment Modal -->
+<div class="modal fade" id="cancelModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Cancel Appointment</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to cancel this appointment? This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No, Keep It</button>
+                <form id="cancelForm" method="POST" class="d-inline">
+                    <button type="submit" class="btn btn-danger">Yes, Cancel It</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Diagnosis Modal -->
+<div class="modal fade" id="diagnosisModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Appointment Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="diagnosisModalBody">
+                <!-- Content will be populated by JavaScript -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function confirmCancel(appointmentId) {
+    const modal = new bootstrap.Modal(document.getElementById('cancelModal'));
+    const cancelForm = document.getElementById('cancelForm');
+    cancelForm.action = "{{ url_for('admin.cancel_appointment', appointment_id=0) }}".replace('0', appointmentId);
+    modal.show();
+}
+
+function showDiagnosis(appointmentId) {
+    const appointment = {{ appointments|tojson|safe }}.find(a => a.id === appointmentId);
+    if (!appointment) return;
+
+    const modalBody = document.getElementById('diagnosisModalBody');
+    modalBody.innerHTML = `
+        <h6>Patient: ${appointment.patient_name}</h6>
+        <h6>Doctor: Dr. ${appointment.doctor_name}</h6>
+        <p><strong>Date:</strong> ${appointment.date} at ${appointment.time}</p>
+        <hr>
+        <p><strong>Initial Complaint:</strong><br>${appointment.initial_complaint}</p>
+        <p><strong>Diagnosis:</strong><br>${appointment.diagnosis}</p>
+        ${appointment.recommendations ? `
+        <p><strong>Recommendations:</strong><br>${appointment.recommendations}</p>
+        ` : ''}
+    `;
+
+    const modal = new bootstrap.Modal(document.getElementById('diagnosisModal'));
+    modal.show();
+}
+</script>
+{% endblock %} 

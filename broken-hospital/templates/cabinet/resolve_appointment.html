@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="card-title mb-4">Resolve Appointment</h3>
+                    
+                    <div class="patient-info mb-4">
+                        <h5>Patient Information</h5>
+                        <p>
+                            <strong>Name:</strong> {{ appointment.patient_name }}<br>
+                            <strong>Date:</strong> {{ appointment.date }}<br>
+                            <strong>Time:</strong> {{ appointment.time }}<br>
+                            <strong>Initial Complaint:</strong> {{ appointment.initial_complaint }}
+                        </p>
+                    </div>
+
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label for="diagnosis" class="form-label">Diagnosis</label>
+                            <textarea class="form-control" id="diagnosis" name="diagnosis" rows="3" required></textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="recommendations" class="form-label">Recommendations</label>
+                            <textarea class="form-control" id="recommendations" name="recommendations" rows="3" required></textarea>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">Complete Appointment</button>
+                            <a href="{{ url_for('cabinet.doctor_dashboard') }}" class="btn btn-outline-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

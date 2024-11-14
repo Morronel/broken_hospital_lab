@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Include your sidebar here -->
+        
+        <!-- Main content -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">Profile Settings</h1>
+            </div>
+
+            <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+                <div id="successToast" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            Profile updated successfully!
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                    </div>
+                </div>
+                
+                <div id="errorToast" class="toast align-items-center text-white bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="d-flex">
+                        <div class="toast-body" id="errorToastMessage">
+                            An error occurred while updating the profile.
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-body">
+                            <form id="profileForm" class="needs-validation" novalidate>
+                                <!-- Hidden field for target email - defaults to user's own email -->
+                                <input type="hidden" id="target_email" name="target_email" value="{{ user.email }}">
+                                
+                                <div class="mb-3">
+                                    <label for="name" class="form-label">Name</label>
+                                    <input type="text" class="form-control" id="name" name="name" value="{{ user.name }}" required>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}" required>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="password" class="form-label">New Password (leave blank to keep current)</label>
+                                    <input type="password" class="form-control" id="password" name="password">
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="phone" class="form-label">Phone</label>
+                                    <input type="tel" class="form-control" id="phone" name="phone" value="{{ user.phone }}">
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="address" class="form-label">Address</label>
+                                    <input type="text" class="form-control" id="address" name="address" value="{{ user.address }}">
+                                </div>
+
+                                <button type="submit" class="btn btn-primary">Save Changes</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<script>
+function showSuccessToast() {
+    const toast = new bootstrap.Toast(document.getElementById('successToast'));
+    toast.show();
+}
+
+function showErrorToast(message) {
+    const errorToast = document.getElementById('errorToast');
+    document.getElementById('errorToastMessage').textContent = message;
+    const toast = new bootstrap.Toast(errorToast);
+    toast.show();
+}
+
+document.getElementById('profileForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const formData = {
+        target_email: document.getElementById('target_email').value,
+        name: document.getElementById('name').value,
+        email: document.getElementById('email').value,
+        phone: document.getElementById('phone').value,
+        address: document.getElementById('address').value
+    };
+    
+    const password = document.getElementById('password').value;
+    if (password) {
+        formData.password = password;
+    }
+    
+    try {
+        const response = await fetch('/cabinet/profile', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData)
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+            showSuccessToast();
+            // Wait for toast to be visible before redirecting
+            setTimeout(() => {
+                if (formData.email !== document.getElementById('target_email').value) {
+                    window.location.href = '/logout';
+                } else {
+                    window.location.reload();
+                }
+            }, 1500);
+        } else {
+            showErrorToast(data.error || 'Failed to update profile');
+        }
+    } catch (error) {
+        console.error('Profile update error:', error);
+        showErrorToast('An error occurred while updating the profile');
+    }
+});
+</script>
+{% endblock %} 

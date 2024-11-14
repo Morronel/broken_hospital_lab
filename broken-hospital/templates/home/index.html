@@ -1,0 +1,190 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Hero Section with Parallax -->
+<div class="hero-section position-relative overflow-hidden d-flex align-items-center">
+    <div class="container">
+        <div class="row align-items-center justify-content-center">
+            <div class="col-md-8 text-center" data-aos="fade-up">
+                <h1 class="display-1 fw-bold mb-4">Healthcare<br>Reimagined</h1>
+                <p class="lead mb-4 fs-4">Experience medical care that puts you first. Advanced technology meets compassionate care.</p>
+                {% if user %}
+                    <p class="h4 mb-4">Welcome back, {{ user.name }}!</p>
+                    <a href="{{ url_for('cabinet.appointment_history', user_id=user.id) }}" class="btn btn-primary btn-lg px-5">Schedule Now</a>
+                {% else %}
+                    <a href="{{ url_for('login.login') }}" class="btn btn-primary btn-lg me-3">Get Started</a>
+                    <a href="#services" class="btn btn-outline-light btn-lg">Learn More</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Services Section -->
+<section id="services" class="py-5">
+    <div class="container">
+        <div class="text-center mb-5" data-aos="fade-up">
+            <h2 class="display-4 fw-bold">Our Services</h2>
+            <p class="lead">Comprehensive healthcare solutions for you and your family</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="service-card">
+                    <div class="icon-box mb-4">
+                        <i class="fas fa-heartbeat fa-3x text-primary"></i>
+                    </div>
+                    <h3>Emergency Care</h3>
+                    <p>24/7 emergency services with state-of-the-art facilities and experienced staff.</p>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="service-card">
+                    <div class="icon-box mb-4">
+                        <i class="fas fa-user-md fa-3x text-primary"></i>
+                    </div>
+                    <h3>Expert Doctors</h3>
+                    <p>Team of specialized doctors providing personalized medical care.</p>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+                <div class="service-card">
+                    <div class="icon-box mb-4">
+                        <i class="fas fa-calendar-check fa-3x text-primary"></i>
+                    </div>
+                    <h3>Easy Scheduling</h3>
+                    <p>Book appointments online anytime, anywhere with our smart system.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section with Counter -->
+<section class="stats-section py-5 bg-primary text-white">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-md-4" data-aos="fade-up">
+                <div class="counter" data-target="15000">0</div>
+                <p>Patients Treated</p>
+            </div>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="counter" data-target="50">0</div>
+                <p>Expert Doctors</p>
+            </div>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="counter" data-target="99">0</div>
+                <p>Satisfaction Rate</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="testimonials py-5">
+    <div class="container">
+        <h2 class="text-center mb-5" data-aos="fade-up">What Our Patients Say</h2>
+        <div class="row">
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="testimonial-card">
+                    <div class="rating mb-3">★★★★★</div>
+                    <p>"Dr. House is amazing! He found what other doctors missed."</p>
+                    <div class="patient-info">
+                        <img src="{{ url_for('static', filename='images/avatar1.jpg') }}" alt="Patient" class="avatar">
+                        <div>
+                            <h5>Michael R.</h5>
+                            <small>Patient since 2023</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Add more testimonials -->
+        </div>
+    </div>
+</section>
+
+<!-- Add required CSS -->
+{% block extra_css %}
+<style>
+.hero-section {
+    min-height: 80vh;
+    background: linear-gradient(135deg, #0d6efd 0%, #0dcaf0 100%);
+    color: white;
+    padding: 4rem 0;
+}
+
+.display-1 {
+    font-size: 5rem;
+    line-height: 1.2;
+}
+
+.lead {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.service-card {
+    padding: 2rem;
+    border-radius: 1rem;
+    background: white;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+}
+
+.service-card:hover {
+    transform: translateY(-10px);
+}
+
+.counter {
+    font-size: 3rem;
+    font-weight: bold;
+}
+
+.testimonial-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 1rem;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 1rem;
+}
+
+.patient-info {
+    display: flex;
+    align-items: center;
+    margin-top: 1rem;
+}
+</style>
+{% endblock %}
+
+<!-- Add required JavaScript -->
+{% block extra_js %}
+<script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+<script>
+    AOS.init();
+
+    // Counter animation
+    const counters = document.querySelectorAll('.counter');
+    counters.forEach(counter => {
+        const target = parseInt(counter.getAttribute('data-target'));
+        const increment = target / 200;
+        
+        const updateCounter = () => {
+            const count = parseInt(counter.innerText);
+            if (count < target) {
+                counter.innerText = Math.ceil(count + increment);
+                setTimeout(updateCounter, 1);
+            } else {
+                counter.innerText = target;
+            }
+        };
+        
+        updateCounter();
+    });
+</script>
+{% endblock %}
+{% endblock %} 

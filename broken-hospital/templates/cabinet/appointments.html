@@ -1,0 +1,193 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Schedule Appointment</h1>
+    
+    <div class="row mt-4">
+        <div class="col-md-8">
+            <!-- Calendar -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div id="calendar"></div>
+                </div>
+            </div>
+            
+            <!-- Appointment Form -->
+            <div class="card">
+                <div class="card-body">
+                    <form id="appointmentForm">
+                        <div class="mb-3">
+                            <label class="form-label">Selected Date: <span id="selectedDate" class="text-primary"></span></label>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="timeSlot" class="form-label">Available Time Slots</label>
+                            <select class="form-select" id="timeSlot" required>
+                                <option value="">Choose time...</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="doctor" class="form-label">Doctor</label>
+                            <select id="doctor" name="doctor" class="form-select" required>
+                                <option value="1">Dr. Gregory House</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="complaint" class="form-label">Initial Complaint</label>
+                            <textarea class="form-control" id="complaint" rows="4" required 
+                                    placeholder="Please describe your symptoms..."></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Schedule Appointment</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <!-- Info Card -->
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Appointment Information</h5>
+                    <ul class="list-unstyled">
+                        <li>• Appointments are available Monday through Friday</li>
+                        <li>• Each session is 30 minutes</li>
+                        <li>• Please arrive 10 minutes early</li>
+                        <li>• Bring your digital health matrix</li>
+                        <li>• No refunds for quantum uncertainties</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- FullCalendar CSS -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/6.1.10/main.min.css" rel="stylesheet">
+
+<!-- FullCalendar JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/6.1.10/index.global.min.js"></script>
+
+<!-- Update the success modal -->
+<div class="modal fade" id="successModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Appointment Scheduled!</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Your appointment has been successfully scheduled.</p>
+                <div class="appointment-details">
+                    <p><strong>Date:</strong> <span id="modalDate"></span></p>
+                    <p><strong>Time:</strong> <span id="modalTime"></span></p>
+                    <p><strong>Doctor:</strong> Dr. Gregory House</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="window.location.href='/cabinet/'">Go to Dashboard</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Update the JavaScript for form submission -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize calendar
+    const calendarEl = document.getElementById('calendar');
+    const calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        selectable: true,
+        selectConstraint: {
+            start: new Date() // Can't select past dates
+        },
+        headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth'
+        },
+        dateClick: function(info) {
+            // Check if date is in the past
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const clickedDate = new Date(info.dateStr);
+            
+            if (clickedDate < today) {
+                alert('Cannot select past dates');
+                return;
+            }
+            
+            // Check if it's a weekend
+            if (clickedDate.getDay() === 0 || clickedDate.getDay() === 6) {
+                alert('Appointments are only available Monday through Friday');
+                return;
+            }
+            
+            updateSelectedDate(info.dateStr);
+            updateTimeSlots(info.dateStr);
+        }
+    });
+    calendar.render();
+
+    // Handle form submission
+    document.getElementById('appointmentForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const date = document.getElementById('selectedDate').textContent;
+        const time = document.getElementById('timeSlot').value;
+        
+        const appointmentData = {
+            date: date,
+            time: time,
+            doctor_id: 1,  // Dr. House's ID
+            complaint: document.getElementById('complaint').value
+        };
+
+        fetch('/cabinet/schedule_appointment', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(appointmentData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Update modal with appointment details
+                document.getElementById('modalDate').textContent = date;
+                document.getElementById('modalTime').textContent = time;
+                
+                // Show success modal
+                const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+                successModal.show();
+            } else {
+                alert(data.error || 'Failed to schedule appointment');
+            }
+        });
+    });
+});
+
+function updateSelectedDate(date) {
+    document.getElementById('selectedDate').textContent = date;
+}
+
+function updateTimeSlots(date) {
+    const timeSlotSelect = document.getElementById('timeSlot');
+    timeSlotSelect.innerHTML = '<option value="">Choose time...</option>'; // Clear existing options
+    
+    // Add available time slots (9 AM to 5 PM, 30-minute intervals)
+    for (let hour = 9; hour < 17; hour++) {
+        for (let minute of ['00', '30']) {
+            const timeStr = `${hour.toString().padStart(2, '0')}:${minute}`;
+            const option = new Option(timeStr, timeStr);
+            timeSlotSelect.add(option);
+        }
+    }
+}
+</script> 
+{% endblock %}

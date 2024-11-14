@@ -1,0 +1,208 @@
+openapi: 3.0.0
+info:
+  title: Hospital Management API
+  description: API documentation for Hospital Management System
+  version: 1.0.0
+
+servers:
+  - url: http://127.0.0.1:5000
+    description: Local development server
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        email:
+          type: string
+        name:
+          type: string
+        role:
+          type: string
+          enum: [patient, doctor, admin]
+        phone:
+          type: string
+        address:
+          type: string
+        birth_date:
+          type: string
+          format: date
+        specialization:
+          type: string
+          nullable: true
+
+    Appointment:
+      type: object
+      properties:
+        id:
+          type: integer
+        date:
+          type: string
+          format: date
+        time:
+          type: string
+        status:
+          type: string
+          enum: [scheduled, completed, cancelled]
+        initial_complaint:
+          type: string
+        diagnosis:
+          type: string
+          nullable: true
+        recommendations:
+          type: string
+          nullable: true
+
+paths:
+  /admin/get-users:
+    get:
+      summary: Get all users
+      responses:
+        '200':
+          description: List of all users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+
+  /admin/user/{id}/delete:
+    post:
+      summary: Delete user
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: User deleted successfully
+
+  /admin/user/{id}/edit:
+    post:
+      summary: Edit user
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                role:
+                  type: string
+                specialization:
+                  type: string
+      responses:
+        '200':
+          description: User updated successfully
+
+  /cabinet/profile:
+    post:
+      summary: Update user profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                target_email:
+                  type: string
+                name:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+                phone:
+                  type: string
+      responses:
+        '200':
+          description: Profile updated successfully
+        '400':
+          description: Email already taken
+        '404':
+          description: User not found
+
+  /signup:
+    post:
+      summary: Create new user account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+                name:
+                  type: string
+      responses:
+        '200':
+          description: User created successfully
+        '400':
+          description: Validation error
+
+  /cabinet/schedule-appointment:
+    post:
+      summary: Schedule new appointment
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                doctor_id:
+                  type: integer
+                date:
+                  type: string
+                  format: date
+                time:
+                  type: string
+                complaint:
+                  type: string
+      responses:
+        '200':
+          description: Appointment scheduled successfully
+
+  /cabinet/resolve-appointment/{id}:
+    post:
+      summary: Resolve appointment
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                diagnosis:
+                  type: string
+                recommendations:
+                  type: string
+      responses:
+        '200':
+          description: Appointment resolved successfully 

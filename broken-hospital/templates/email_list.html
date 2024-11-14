@@ -1,0 +1,16 @@
+<div class="email-list">
+    {% for email in emails %}
+    <div class="email">
+        <div class="email-header">
+            [{{ email.timestamp }}]
+            <br>
+            FROM: {{ email.from }}
+            <br>
+            TO: {{ email.to }}
+        </div>
+        <div class="email-body">
+            {{ email.body | safe }}
+        </div>
+    </div>
+    {% endfor %}
+</div> 
