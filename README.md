@@ -34,6 +34,8 @@ This application is intentionally vulnerable and should never be deployed in a p
 ## 📝 License
 MIT License - Feel free to use this for your own CTF events or learning purposes.
 
+Check out my https://t.me/binary_xor channel
+
 ---
 
 ![image](https://github.com/user-attachments/assets/c2c88893-72e1-4c09-9db0-72a9a4c957d1)
